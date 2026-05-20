@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apprendre Vue.js — Guide Interactif</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a38;
+    --green: #41b883;
+    --green-dim: #2d8060;
+    --blue: #3fb0e8;
+    --yellow: #f5d76e;
+    --red: #e06b75;
+    --text: #e4e8f0;
+    --muted: #7a8399;
+    --code-bg: #0a0c10;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .layout { display: flex; min-height: 100vh; }
+
+  nav {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 2rem 1.2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--green);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: grid; place-items: center;
+    font-size: 16px; font-weight: 800; color: #0d0f14;
+  }
+  .logo-text { font-size: 1.1rem; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+
+  .nav-section { margin-bottom: 1.5rem; }
+  .nav-label {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  .nav-item {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.15s;
+    border: none; background: none; width: 100%; text-align: left;
+    font-family: 'Syne', sans-serif;
+  }
+  .nav-item:hover { color: var(--text); background: var(--border); }
+  .nav-item.active { color: var(--green); background: rgba(65,184,131,0.12); }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 900px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; }
+  h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 0.8rem; color: var(--green); }
+  h3 { font-size: 1.1rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: var(--blue); }
+  p { margin-bottom: 1rem; color: #b0b8cc; font-size: 0.95rem; }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .tag-green { background: rgba(65,184,131,0.15); color: var(--green); border: 1px solid var(--green-dim); }
+  .tag-blue { background: rgba(63,176,232,0.12); color: var(--blue); border: 1px solid #2a7a9e; }
+  .tag-yellow { background: rgba(245,215,110,0.12); color: var(--yellow); border: 1px solid #9e8a3a; }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: #cdd6f4;
+  }
+  .kw { color: var(--red); }
+  .fn { color: var(--blue); }
+  .str { color: var(--green); }
+  .cm { color: var(--muted); font-style: italic; }
+  .attr { color: var(--yellow); }
+  .val { color: #c9a0dc; }
+
+  /* CONCEPT CARDS */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--green-dim); }
+  .card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .card p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+  /* QUIZ */
+  .quiz {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .quiz-question { font-weight: 700; margin-bottom: 1rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-opt {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    background: var(--code-bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .quiz-opt:hover { border-color: var(--blue); color: var(--blue); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(65,184,131,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(224,107,117,0.1); color: var(--red); }
+  .quiz-feedback { margin-top: 0.8rem; font-size: 0.85rem; display: none; }
+
+  /* DEMO AREA */
+  .demo-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .demo-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .demo-body { padding: 1.5rem; }
+
+  /* INTERACTIVE DEMOS */
+  .counter-display {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--green);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 1rem;
+  }
+  .btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+    margin-right: 0.5rem;
+  }
+  .btn-green { background: var(--green); color: #0d0f14; }
+  .btn-green:hover { background: #52d49a; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #f08090; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+  .todo-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    width: 250px;
+    margin-right: 0.5rem;
+    outline: none;
+  }
+  .todo-input:focus { border-color: var(--green); }
+  .todo-list { list-style: none; margin-top: 1rem; }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .todo-item.done { text-decoration: line-through; color: var(--muted); }
+  .todo-check { cursor: pointer; accent-color: var(--green); width: 16px; height: 16px; }
+
+  /* PROGRESS */
+  .progress-bar {
+    background: var(--border);
+    border-radius: 20px;
+    height: 6px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* INFO BOX */
+  .info {
+    border-left: 3px solid var(--blue);
+    background: rgba(63,176,232,0.06);
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+    color: #8ecee8;
+  }
+  .warn {
+    border-left: 3px solid var(--yellow);
+    background: rgba(245,215,110,0.06);
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+    color: #d4b85a;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    main { padding: 2rem 1.5rem; }
+    .cards { grid-template-columns: 1fr; }
+    nav { width: 220px; min-width: 220px; }
+  }
+  @media (max-width: 650px) {
+    .layout { flex-direction: column; }
+    nav { width: 100%; height: auto; position: relative; }
+    main { padding: 1.5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">V</div>
+    <div class="logo-text">Vue.js Guide</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress" style="width:14%"></div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Fondamentaux</div>
+    <button class="nav-item active" onclick="goTo('intro',this)">01 — Introduction</button>
+    <button class="nav-item" onclick="goTo('instance',this)">02 — Instance Vue</button>
+    <button class="nav-item" onclick="goTo('directives',this)">03 — Directives</button>
+    <button class="nav-item" onclick="goTo('reactivity',this)">04 — Réactivité</button>
+    <button class="nav-item" onclick="goTo('components',this)">05 — Composants</button>
+    <button class="nav-item" onclick="goTo('composables',this)">06 — Composables</button>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Projet</div>
+    <button class="nav-item" onclick="goTo('project',this)">🚀 Todo App</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- SECTION 1: INTRO -->
+  <section class="section active" id="sec-intro">
+    <span class="tag tag-green">Vue.js 3</span>
+    <h1>Apprendre<br><span style="color:var(--green)">Vue.js</span></h1>
+    <p>Vue.js est un framework JavaScript progressif pour construire des interfaces utilisateur réactives. Il est léger, flexible, et très facile à apprendre.</p>
+
+    <h2>Pourquoi Vue.js ?</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>Réactif</h4>
+        <p>Les données changent → l'interface se met à jour automatiquement.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h4>Composants</h4>
+        <p>Construis ton UI en blocs réutilisables et indépendants.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h4>Progressif</h4>
+        <p>Ajoute Vue sur n'importe quelle page HTML, ou construis une SPA complète.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h4>Écosystème riche</h4>
+        <p>Vue Router, Pinia, Vite — tout ce qu'il faut pour des apps modernes.</p>
+      </div>
+    </div>
+
+    <h2>Installation rapide</h2>
+    <p>La façon la plus simple : via un CDN dans ton HTML.</p>
+    <pre><code><span class="cm">&lt;!-- Dans votre HTML --&gt;</span>
+<span class="kw">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://unpkg.com/vue@3/dist/vue.global.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Avec Vite (recommandé pour projets) --&gt;</span>
+npm create vue@latest mon-projet
+cd mon-projet
+npm install
+npm run dev</code></pre>
+
+    <div class="info">💡 Vue 3 avec la <strong>Composition API</strong> et <code>&lt;script setup&gt;</code> est la syntaxe moderne recommandée.</div>
+
+    <button class="btn btn-green" onclick="goTo('instance', document.querySelector('.nav-item:nth-child(2)'))">Suivant →</button>
+  </section>
+
+  <!-- SECTION 2: INSTANCE -->
+  <section class="section" id="sec-instance">
+    <span class="tag tag-blue">Fondamentaux</span>
+    <h1>L'Instance<br><span style="color:var(--blue)">Vue</span></h1>
+
+    <p>Tout part d'un composant Vue. Avec la <strong>Composition API</strong>, on utilise <code>&lt;script setup&gt;</code> pour déclarer notre logique.</p>
+
+    <h2>Structure d'un Composant</h2>
+    <pre><code><span class="cm">&lt;!-- MonComposant.vue --&gt;</span>
+
+<span class="kw">&lt;template&gt;</span>
+  <span class="kw">&lt;div&gt;</span>
+    <span class="kw">&lt;h1&gt;</span>{{ <span class="attr">titre</span> }}<span class="kw">&lt;/h1&gt;</span>
+    <span class="kw">&lt;p&gt;</span>Bienvenue, {{ <span class="attr">nom</span> }} !<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/template&gt;</span>
+
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> { <span class="fn">ref</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">titre</span> = <span class="str">'Mon App Vue'</span>
+<span class="kw">const</span> <span class="attr">nom</span> = <span class="fn">ref</span>(<span class="str">'Alice'</span>)
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="kw">&lt;style scoped&gt;</span>
+<span class="attr">h1</span> { <span class="fn">color</span>: <span class="val">#41b883</span>; }
+<span class="kw">&lt;/style&gt;</span></code></pre>
+
+    <h3>Les 3 blocs d'un SFC (Single File Component)</h3>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🖼️</div>
+        <h4>&lt;template&gt;</h4>
+        <p>Le HTML de ton composant. Utilise les directives Vue ici.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>&lt;script setup&gt;</h4>
+        <p>La logique JavaScript : données, méthodes, computed...</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎨</div>
+        <h4>&lt;style scoped&gt;</h4>
+        <p>CSS isolé au composant grâce à <code>scoped</code>.</p>
+      </div>
+    </div>
+
+    <h2>Interpolation {{ }}</h2>
+    <p>Double accolades pour afficher des données dans le template.</p>
+    <pre><code><span class="kw">&lt;p&gt;</span>Message : {{ <span class="attr">message</span> }}<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;</span>Calcul : {{ <span class="attr">prix</span> * <span class="val">1.2</span> }}<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;</span>Ternaire : {{ <span class="attr">actif</span> ? <span class="str">'Oui'</span> : <span class="str">'Non'</span> }}<span class="kw">&lt;/p&gt;</span></code></pre>
+
+    <button class="btn btn-green" onclick="goTo('directives', document.querySelectorAll('.nav-item')[2])">Suivant →</button>
+  </section>
+
+  <!-- SECTION 3: DIRECTIVES -->
+  <section class="section" id="sec-directives">
+    <span class="tag tag-yellow">Directives</span>
+    <h1>Les<br><span style="color:var(--yellow)">Directives</span></h1>
+
+    <p>Les directives sont des attributs spéciaux préfixés par <code>v-</code>. Elles appliquent un comportement réactif au DOM.</p>
+
+    <h2>v-bind — Lier des attributs</h2>
+    <pre><code><span class="cm">&lt;!-- Forme longue --&gt;</span>
+<span class="kw">&lt;img</span> <span class="attr">v-bind:src</span>=<span class="str">"imageUrl"</span> <span class="attr">v-bind:alt</span>=<span class="str">"description"</span> <span class="kw">/&gt;</span>
+
+<span class="cm">&lt;!-- Raccourci (: ) --&gt;</span>
+<span class="kw">&lt;img</span> <span class="attr">:src</span>=<span class="str">"imageUrl"</span> <span class="attr">:alt</span>=<span class="str">"description"</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;button</span> <span class="attr">:disabled</span>=<span class="str">"estDesactive"</span><span class="kw">&gt;</span>Cliquer<span class="kw">&lt;/button&gt;</span></code></pre>
+
+    <h2>v-on — Écouter les événements</h2>
+    <pre><code><span class="cm">&lt;!-- Forme longue --&gt;</span>
+<span class="kw">&lt;button</span> <span class="attr">v-on:click</span>=<span class="str">"incrementer"</span><span class="kw">&gt;</span>+1<span class="kw">&lt;/button&gt;</span>
+
+<span class="cm">&lt;!-- Raccourci (@ ) --&gt;</span>
+<span class="kw">&lt;button</span> <span class="attr">@click</span>=<span class="str">"incrementer"</span><span class="kw">&gt;</span>+1<span class="kw">&lt;/button&gt;</span>
+<span class="kw">&lt;input</span> <span class="attr">@input</span>=<span class="str">"onChange"</span> <span class="attr">@keyup.enter</span>=<span class="str">"valider"</span> <span class="kw">/&gt;</span></code></pre>
+
+    <h2>v-model — Liaison bidirectionnelle</h2>
+    <pre><code><span class="kw">&lt;input</span> <span class="attr">v-model</span>=<span class="str">"texte"</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;p&gt;</span>Tu as tapé : {{ <span class="attr">texte</span> }}<span class="kw">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- Équivaut à : --&gt;</span>
+<span class="kw">&lt;input</span> <span class="attr">:value</span>=<span class="str">"texte"</span> <span class="attr">@input</span>=<span class="str">"texte = $event.target.value"</span> <span class="kw">/&gt;</span></code></pre>
+
+    <h2>v-if / v-else — Affichage conditionnel</h2>
+    <pre><code><span class="kw">&lt;p</span> <span class="attr">v-if</span>=<span class="str">"score > 10"</span><span class="kw">&gt;</span>🎉 Gagné !<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p</span> <span class="attr">v-else-if</span>=<span class="str">"score > 5"</span><span class="kw">&gt;</span>😐 Moyen<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p</span> <span class="attr">v-else</span><span class="kw">&gt;</span>😢 Perdu<span class="kw">&lt;/p&gt;</span></code></pre>
+
+    <h2>v-for — Listes</h2>
+    <pre><code><span class="kw">&lt;ul&gt;</span>
+  <span class="kw">&lt;li</span>
+    <span class="attr">v-for</span>=<span class="str">"(item, index) in fruits"</span>
+    <span class="attr">:key</span>=<span class="str">"item.id"</span>
+  <span class="kw">&gt;</span>
+    {{ index + 1 }}. {{ item.nom }}
+  <span class="kw">&lt;/li&gt;</span>
+<span class="kw">&lt;/ul&gt;</span></code></pre>
+
+    <div class="warn">⚠️ Toujours utiliser <code>:key</code> unique avec <code>v-for</code> pour la performance.</div>
+
+    <!-- MINI QUIZ -->
+    <div class="quiz">
+      <div class="quiz-question">❓ Quel raccourci utilise-t-on pour <code>v-on:click</code> ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this, false)">v:click</button>
+        <button class="quiz-opt" onclick="answer(this, true)">@click</button>
+        <button class="quiz-opt" onclick="answer(this, false)">#click</button>
+        <button class="quiz-opt" onclick="answer(this, false)">!click</button>
+      </div>
+      <div class="quiz-feedback" id="qfeedback1"></div>
+    </div>
+
+    <button class="btn btn-green" onclick="goTo('reactivity', document.querySelectorAll('.nav-item')[3])">Suivant →</button>
+  </section>
+
+  <!-- SECTION 4: REACTIVITY -->
+  <section class="section" id="sec-reactivity">
+    <span class="tag tag-green">Réactivité</span>
+    <h1>Réactivité &<br><span style="color:var(--green)">Composition API</span></h1>
+
+    <h2>ref() — Données réactives simples</h2>
+    <pre><code><span class="kw">import</span> { <span class="fn">ref</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">compteur</span> = <span class="fn">ref</span>(<span class="val">0</span>)
+<span class="kw">const</span> <span class="attr">nom</span> = <span class="fn">ref</span>(<span class="str">'Vue'</span>)
+
+<span class="cm">// Dans le script, on accède avec .value</span>
+compteur.<span class="attr">value</span>++
+console.<span class="fn">log</span>(nom.<span class="attr">value</span>) <span class="cm">// 'Vue'</span>
+
+<span class="cm">// Dans le template, Vue retire .value automatiquement</span>
+<span class="cm">// &lt;p&gt;{{ compteur }}&lt;/p&gt; ← pas de .value ici</span></code></pre>
+
+    <h2>reactive() — Objets réactifs</h2>
+    <pre><code><span class="kw">import</span> { <span class="fn">reactive</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">utilisateur</span> = <span class="fn">reactive</span>({
+  nom: <span class="str">'Alice'</span>,
+  age: <span class="val">25</span>,
+  admin: <span class="val">false</span>
+})
+
+utilisateur.<span class="attr">age</span>++ <span class="cm">// Réactif directement, pas de .value</span></code></pre>
+
+    <h2>computed() — Propriétés calculées</h2>
+    <pre><code><span class="kw">import</span> { <span class="fn">ref</span>, <span class="fn">computed</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">prix</span> = <span class="fn">ref</span>(<span class="val">100</span>)
+<span class="kw">const</span> <span class="attr">tva</span> = <span class="fn">ref</span>(<span class="val">0.2</span>)
+
+<span class="kw">const</span> <span class="attr">prixTTC</span> = <span class="fn">computed</span>(() =&gt; {
+  <span class="kw">return</span> prix.<span class="attr">value</span> * (<span class="val">1</span> + tva.<span class="attr">value</span>)
+})
+
+<span class="cm">// Recalculé automatiquement si prix ou tva change</span>
+<span class="cm">// &lt;p&gt;{{ prixTTC }}&lt;/p&gt; → 120</span></code></pre>
+
+    <h2>watch() — Surveiller des changements</h2>
+    <pre><code><span class="kw">import</span> { <span class="fn">ref</span>, <span class="fn">watch</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">recherche</span> = <span class="fn">ref</span>(<span class="str">''</span>)
+
+<span class="fn">watch</span>(recherche, (<span class="attr">newVal</span>, <span class="attr">oldVal</span>) =&gt; {
+  console.<span class="fn">log</span>(<span class="str">`Changé: </span>${oldVal}<span class="str"> → </span>${newVal}<span class="str">`</span>)
+  <span class="cm">// Lancer une recherche API ici</span>
+})</code></pre>
+
+    <!-- DÉMO INTERACTIVE COMPTEUR -->
+    <h2>Démo — Compteur réactif</h2>
+    <div class="demo-box">
+      <div class="demo-header">
+        <div class="dot" style="background:#e06b75"></div>
+        <div class="dot" style="background:#f5d76e"></div>
+        <div class="dot" style="background:#41b883"></div>
+        live demo
+      </div>
+      <div class="demo-body">
+        <div class="counter-display" id="counterVal">0</div>
+        <button class="btn btn-green" onclick="changeCounter(1)">+ Incrémenter</button>
+        <button class="btn btn-red" onclick="changeCounter(-1)">− Décrémenter</button>
+        <button class="btn btn-outline" onclick="changeCounter(0)">Reset</button>
+        <p style="margin-top:1rem;font-size:0.82rem;">
+          ← Ceci simule <code>ref(0)</code> + <code>@click</code>
+        </p>
+      </div>
+    </div>
+
+    <button class="btn btn-green" onclick="goTo('components', document.querySelectorAll('.nav-item')[4])">Suivant →</button>
+  </section>
+
+  <!-- SECTION 5: COMPONENTS -->
+  <section class="section" id="sec-components">
+    <span class="tag tag-blue">Composants</span>
+    <h1>Les<br><span style="color:var(--blue)">Composants</span></h1>
+
+    <p>Les composants sont les briques de base d'une app Vue. On les imbrique pour construire des interfaces complexes.</p>
+
+    <h2>Props — Passer des données au composant enfant</h2>
+    <pre><code><span class="cm">&lt;!-- Enfant : BoutonAction.vue --&gt;</span>
+<span class="kw">&lt;template&gt;</span>
+  <span class="kw">&lt;button</span> <span class="attr">:class</span>=<span class="str">"type"</span><span class="kw">&gt;</span>{{ <span class="attr">label</span> }}<span class="kw">&lt;/button&gt;</span>
+<span class="kw">&lt;/template&gt;</span>
+
+<span class="kw">&lt;script setup&gt;</span>
+<span class="fn">defineProps</span>({
+  label: { <span class="attr">type</span>: String, <span class="attr">required</span>: <span class="val">true</span> },
+  type:  { <span class="attr">type</span>: String, <span class="attr">default</span>: <span class="str">'primary'</span> }
+})
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Parent : utilisation --&gt;</span>
+<span class="kw">&lt;BoutonAction</span> <span class="attr">label</span>=<span class="str">"Valider"</span> <span class="attr">type</span>=<span class="str">"success"</span> <span class="kw">/&gt;</span></code></pre>
+
+    <h2>Emits — Communiquer avec le parent</h2>
+    <pre><code><span class="cm">&lt;!-- Enfant --&gt;</span>
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">const</span> <span class="attr">emit</span> = <span class="fn">defineEmits</span>([<span class="str">'valide'</span>, <span class="str">'annule'</span>])
+
+<span class="kw">function</span> <span class="fn">soumettre</span>() {
+  emit(<span class="str">'valide'</span>, { <span class="attr">data</span>: <span class="str">'résultat'</span> })
+}
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="cm">&lt;!-- Parent --&gt;</span>
+<span class="kw">&lt;MonFormulaire</span> <span class="attr">@valide</span>=<span class="str">"handleValide"</span> <span class="kw">/&gt;</span></code></pre>
+
+    <h2>Slots — Contenu flexible</h2>
+    <pre><code><span class="cm">&lt;!-- Carte.vue --&gt;</span>
+<span class="kw">&lt;template&gt;</span>
+  <span class="kw">&lt;div</span> <span class="attr">class</span>=<span class="str">"carte"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;h3&gt;</span>{{ <span class="attr">titre</span> }}<span class="kw">&lt;/h3&gt;</span>
+    <span class="kw">&lt;slot /&gt;</span>  <span class="cm">&lt;!-- contenu injecté ici --&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/template&gt;</span>
+
+<span class="cm">&lt;!-- Utilisation --&gt;</span>
+<span class="kw">&lt;Carte</span> <span class="attr">titre</span>=<span class="str">"Info"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;p&gt;</span>Ce texte va dans le slot !<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;/Carte&gt;</span></code></pre>
+
+    <h2>Lifecycle Hooks</h2>
+    <pre><code><span class="kw">import</span> { <span class="fn">onMounted</span>, <span class="fn">onUnmounted</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="fn">onMounted</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">'Composant monté dans le DOM'</span>)
+  <span class="cm">// Appels API, event listeners...</span>
+})
+
+<span class="fn">onUnmounted</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">'Composant détruit'</span>)
+  <span class="cm">// Nettoyage des listeners</span>
+})</code></pre>
+
+    <button class="btn btn-green" onclick="goTo('composables', document.querySelectorAll('.nav-item')[5])">Suivant →</button>
+  </section>
+
+  <!-- SECTION 6: COMPOSABLES -->
+  <section class="section" id="sec-composables">
+    <span class="tag tag-yellow">Avancé</span>
+    <h1>Les<br><span style="color:var(--yellow)">Composables</span></h1>
+
+    <p>Les composables sont des fonctions qui encapsulent et réutilisent de la logique avec état. C'est l'équivalent Vue des hooks React.</p>
+
+    <h2>Exemple : useCompteur</h2>
+    <pre><code><span class="cm">// composables/useCompteur.js</span>
+<span class="kw">import</span> { <span class="fn">ref</span>, <span class="fn">computed</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">export function</span> <span class="fn">useCompteur</span>(initial = <span class="val">0</span>) {
+  <span class="kw">const</span> <span class="attr">valeur</span> = <span class="fn">ref</span>(initial)
+
+  <span class="kw">function</span> <span class="fn">incrementer</span>() { valeur.<span class="attr">value</span>++ }
+  <span class="kw">function</span> <span class="fn">decrementer</span>() { valeur.<span class="attr">value</span>-- }
+  <span class="kw">function</span> <span class="fn">reset</span>() { valeur.<span class="attr">value</span> = initial }
+
+  <span class="kw">const</span> <span class="attr">estPositif</span> = <span class="fn">computed</span>(() =&gt; valeur.<span class="attr">value</span> > <span class="val">0</span>)
+
+  <span class="kw">return</span> { valeur, incrementer, decrementer, reset, estPositif }
+}
+
+<span class="cm">// Dans un composant</span>
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> { <span class="fn">useCompteur</span> } <span class="kw">from</span> <span class="str">'./composables/useCompteur'</span>
+<span class="kw">const</span> { valeur, incrementer, reset } = <span class="fn">useCompteur</span>(<span class="val">10</span>)
+<span class="kw">&lt;/script&gt;</span></code></pre>
+
+    <h2>Exemple : useFetch</h2>
+    <pre><code><span class="cm">// composables/useFetch.js</span>
+<span class="kw">import</span> { <span class="fn">ref</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">export function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> <span class="attr">data</span>    = <span class="fn">ref</span>(<span class="val">null</span>)
+  <span class="kw">const</span> <span class="attr">loading</span> = <span class="fn">ref</span>(<span class="val">true</span>)
+  <span class="kw">const</span> <span class="attr">error</span>   = <span class="fn">ref</span>(<span class="val">null</span>)
+
+  <span class="fn">fetch</span>(url)
+    .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+    .<span class="fn">then</span>(d =&gt; { data.<span class="attr">value</span> = d; loading.<span class="attr">value</span> = <span class="val">false</span> })
+    .<span class="fn">catch</span>(e =&gt; { error.<span class="attr">value</span> = e; loading.<span class="attr">value</span> = <span class="val">false</span> })
+
+  <span class="kw">return</span> { data, loading, error }
+}</code></pre>
+
+    <div class="info">💡 Convention : toujours préfixer les composables par <code>use</code> (useTodo, useAuth, useLocalStorage...)</div>
+
+    <button class="btn btn-green" onclick="goTo('project', document.querySelectorAll('.nav-item')[6])">→ Passer au Projet !</button>
+  </section>
+
+  <!-- SECTION: PROJECT -->
+  <section class="section" id="sec-project">
+    <span class="tag tag-green">Projet Final</span>
+    <h1>Todo App<br><span style="color:var(--green)">Interactive</span></h1>
+
+    <p>Appliquons tout ce qu'on a appris ! Cette Todo App utilise : <code>ref</code>, <code>computed</code>, <code>v-model</code>, <code>v-for</code>, <code>v-if</code>, <code>@click</code>.</p>
+
+    <!-- LIVE DEMO TODO APP -->
+    <div class="demo-box">
+      <div class="demo-header">
+        <div class="dot" style="background:#e06b75"></div>
+        <div class="dot" style="background:#f5d76e"></div>
+        <div class="dot" style="background:#41b883"></div>
+        Todo App — Vue.js en action
+      </div>
+      <div class="demo-body">
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+          <input class="todo-input" id="todoInput" placeholder="Nouvelle tâche..." onkeyup="if(event.key==='Enter')addTodo()">
+          <button class="btn btn-green" onclick="addTodo()">Ajouter</button>
+        </div>
+        <div style="margin:1rem 0;display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-outline" id="filter-all" onclick="setFilter('all')" style="border-color:var(--green);color:var(--green)">Tout</button>
+          <button class="btn btn-outline" id="filter-active" onclick="setFilter('active')">Actives</button>
+          <button class="btn btn-outline" id="filter-done" onclick="setFilter('done')">Terminées</button>
+        </div>
+        <ul class="todo-list" id="todoList"></ul>
+        <p id="todoStats" style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem;"></p>
+      </div>
+    </div>
+
+    <h2>Le Code Source</h2>
+    <pre><code><span class="kw">&lt;template&gt;</span>
+  <span class="kw">&lt;div&gt;</span>
+    <span class="kw">&lt;input</span> <span class="attr">v-model</span>=<span class="str">"nouvelleTache"</span> <span class="attr">@keyup.enter</span>=<span class="str">"ajouter"</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;button</span> <span class="attr">@click</span>=<span class="str">"ajouter"</span><span class="kw">&gt;</span>Ajouter<span class="kw">&lt;/button&gt;</span>
+
+    <span class="kw">&lt;ul&gt;</span>
+      <span class="kw">&lt;li</span>
+        <span class="attr">v-for</span>=<span class="str">"todo in tachesFiltrees"</span>
+        <span class="attr">:key</span>=<span class="str">"todo.id"</span>
+        <span class="attr">:class</span>=<span class="str">"{ done: todo.fait }"</span>
+      <span class="kw">&gt;</span>
+        <span class="kw">&lt;input</span> <span class="attr">type</span>=<span class="str">"checkbox"</span> <span class="attr">v-model</span>=<span class="str">"todo.fait"</span> <span class="kw">/&gt;</span>
+        {{ todo.texte }}
+        <span class="kw">&lt;button</span> <span class="attr">@click</span>=<span class="str">"supprimer(todo.id)"</span><span class="kw">&gt;</span>✕<span class="kw">&lt;/button&gt;</span>
+      <span class="kw">&lt;/li&gt;</span>
+    <span class="kw">&lt;/ul&gt;</span>
+
+    <span class="kw">&lt;p&gt;</span>{{ tachesRestantes }} tâches restantes<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/template&gt;</span>
+
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> { <span class="fn">ref</span>, <span class="fn">computed</span> } <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="kw">const</span> <span class="attr">nouvelleTache</span> = <span class="fn">ref</span>(<span class="str">''</span>)
+<span class="kw">const</span> <span class="attr">filtre</span>       = <span class="fn">ref</span>(<span class="str">'all'</span>)
+<span class="kw">const</span> <span class="attr">taches</span>       = <span class="fn">ref</span>([
+  { id: <span class="val">1</span>, texte: <span class="str">'Apprendre Vue.js'</span>, fait: <span class="val">false</span> },
+  { id: <span class="val">2</span>, texte: <span class="str">'Faire un projet'</span>,  fait: <span class="val">false</span> }
+])
+
+<span class="kw">const</span> <span class="attr">tachesFiltrees</span> = <span class="fn">computed</span>(() =&gt; {
+  <span class="kw">if</span> (filtre.<span class="attr">value</span> === <span class="str">'active'</span>) <span class="kw">return</span> taches.<span class="attr">value</span>.<span class="fn">filter</span>(t =&gt; !t.fait)
+  <span class="kw">if</span> (filtre.<span class="attr">value</span> === <span class="str">'done'</span>)   <span class="kw">return</span> taches.<span class="attr">value</span>.<span class="fn">filter</span>(t =&gt;  t.fait)
+  <span class="kw">return</span> taches.<span class="attr">value</span>
+})
+
+<span class="kw">const</span> <span class="attr">tachesRestantes</span> = <span class="fn">computed</span>(() =&gt;
+  taches.<span class="attr">value</span>.<span class="fn">filter</span>(t =&gt; !t.fait).<span class="attr">length</span>
+)
+
+<span class="kw">function</span> <span class="fn">ajouter</span>() {
+  <span class="kw">if</span> (!nouvelleTache.<span class="attr">value</span>.<span class="fn">trim</span>()) <span class="kw">return</span>
+  taches.<span class="attr">value</span>.<span class="fn">push</span>({
+    id: Date.<span class="fn">now</span>(),
+    texte: nouvelleTache.<span class="attr">value</span>,
+    fait: <span class="val">false</span>
+  })
+  nouvelleTache.<span class="attr">value</span> = <span class="str">''</span>
+}
+
+<span class="kw">function</span> <span class="fn">supprimer</span>(id) {
+  taches.<span class="attr">value</span> = taches.<span class="attr">value</span>.<span class="fn">filter</span>(t =&gt; t.id !== id)
+}
+<span class="kw">&lt;/script&gt;</span></code></pre>
+
+    <h2>Prochaines étapes</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <h4>Vue Router</h4>
+        <p>Navigation entre pages avec <code>vue-router</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🍍</div>
+        <h4>Pinia</h4>
+        <p>Gestion d'état global moderne pour Vue.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>Vite</h4>
+        <p>Bundler ultra-rapide, parfait avec Vue.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧪</div>
+        <h4>Vitest</h4>
+        <p>Tests unitaires natifs pour Vue.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;padding:1.5rem;border:1px solid var(--green);border-radius:10px;background:rgba(65,184,131,0.05)">
+      <p style="color:var(--green);font-weight:700;font-size:1rem;margin-bottom:0.5rem">🎉 Bravo ! Tu maîtrises les bases de Vue.js</p>
+      <p style="margin:0;font-size:0.88rem;">Tu connais maintenant : les composants SFC, la réactivité (ref/reactive/computed/watch), les directives (v-model, v-if, v-for, v-bind, v-on), les props/emits, les composables, et un projet complet.</p>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+// NAVIGATION
+const sections = ['intro','instance','directives','reactivity','components','composables','project'];
+const progressMap = {intro:14, instance:28, directives:43, reactivity:57, components:71, composables:85, project:100};
+
+function goTo(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.getElementById('progress').style.width = progressMap[id] + '%';
+  window.scrollTo(0, 0);
+}
+
+// COUNTER DEMO
+let counterVal = 0;
+function changeCounter(delta) {
+  if (delta === 0) counterVal = 0;
+  else counterVal += delta;
+  document.getElementById('counterVal').textContent = counterVal;
+  document.getElementById('counterVal').style.color =
+    counterVal > 0 ? 'var(--green)' : counterVal < 0 ? 'var(--red)' : 'var(--blue)';
+}
+
+// QUIZ
+function answer(btn, correct) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts.forEach(o => { if (o.onclick.toString().includes('true')) o.classList.add('correct'); });
+  const fb = btn.closest('.quiz').querySelector('.quiz-feedback');
+  fb.style.display = 'block';
+  fb.style.color = correct ? 'var(--green)' : 'var(--red)';
+  fb.textContent = correct ? '✅ Exact ! @click est le raccourci de v-on:click.' : '❌ Non. Le bon raccourci est @click.';
+}
+
+// TODO APP
+let todos = [
+  { id: 1, text: 'Apprendre Vue.js 3', done: true },
+  { id: 2, text: 'Comprendre ref() et reactive()', done: false },
+  { id: 3, text: 'Créer mon premier composant', done: false }
+];
+let currentFilter = 'all';
+
+function renderTodos() {
+  const list = document.getElementById('todoList');
+  const filtered = todos.filter(t => {
+    if (currentFilter === 'active') return !t.done;
+    if (currentFilter === 'done') return t.done;
+    return true;
+  });
+  list.innerHTML = filtered.map(t => `
+    <li class="todo-item ${t.done ? 'done' : ''}">
+      <input type="checkbox" class="todo-check" ${t.done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
+      <span style="flex:1">${t.text}</span>
+      <button onclick="deleteTodo(${t.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 0.3rem" title="Supprimer">✕</button>
+    </li>
+  `).join('');
+  const remaining = todos.filter(t => !t.done).length;
+  document.getElementById('todoStats').textContent =
+    `${remaining} tâche${remaining !== 1 ? 's' : ''} restante${remaining !== 1 ? 's' : ''} • ${todos.length} total`;
+}
+
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  input.value = '';
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  const t = todos.find(t => t.id === id);
+  if (t) t.done = !t.done;
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  todos = todos.filter(t => t.id !== id);
+  renderTodos();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('[id^="filter-"]').forEach(b => {
+    b.style.borderColor = '';
+    b.style.color = '';
+  });
+  const active = document.getElementById('filter-' + f);
+  active.style.borderColor = 'var(--green)';
+  active.style.color = 'var(--green)';
+  renderTodos();
+}
+
+renderTodos();
+</script>
+</body>
+</html>
